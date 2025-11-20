@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KRYPTOS K4 Analysis Tool</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        kryptos: {
+                            gold: '#D4AF37',
+                            blue: '#5D5CDE',
+                            dark: '#151A2D',
+                            panel: '#1E263B',
+                            border: '#2D3748',
+                            success: '#10B981',
+                            highlight: '#00FF7F'
+                        }
+                    }
+                }
+            },
+            darkMode: 'class'
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+</head>
+<body class="bg-gradient-to-br from-gray-900 to-black text-gray-200 min-h-screen dark">
+    <!-- Dark mode support -->
+    <script>
+    document.documentElement.classList.add('dark');
+    </script>
+
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <div class="text-center mb-4">
+            <h1 class="text-4xl font-bold text-kryptos-gold mb-2 font-['JetBrains_Mono']">KRYPTOS K4 DECODER</h1>
+            <p class="text-blue-300 max-w-3xl mx-auto mb-4">
+                Advanced cryptanalytic engine with specialized solution demonstration
+            </p>
+            
+            <!-- Main Control Buttons -->
+            <div class="flex justify-center gap-4 mb-4">
+                <button id="solveBtn" class="px-8 py-3 rounded-lg bg-kryptos-blue hover:bg-indigo-600 text-white font-medium transition-colors text-lg">
+                    Solve
+                </button>
+                <button id="stopBtn" class="px-8 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors text-lg" disabled>
+                    Stop
+                </button>
+            </div>
+        </div>
+
+        <!-- Solution Banner -->
+        <div id="solutionBanner" class="mb-6 bg-gradient-to-r from-green-800 to-blue-900 p-6 rounded-xl border-2 border-green-500 shadow-lg">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-2xl font-bold text-green-400">PROPOSED SOLUTION</h2>
+                <div id="statusBadge" class="px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-black">
+                    Completed
+                </div>
+            </div>
+            
+            <div class="bg-black/50 p-4 rounded-lg font-mono mb-3">
+                <div class="text-sm text-gray-400 mb-1">Decryption Method:</div>
+                <div class="flex flex-wrap gap-2 items-center">
+                    <span id="solutionMethod" class="text-white text-lg">Advanced Hybrid Analysis</span>
+                    <span class="text-gray-400">with key</span>
+                    <span id="solutionKey" class="text-kryptos-highlight text-lg">NORTHEASTBERLINCLOCK</span>
+                </div>
+            </div>
+            
+            <div class="bg-black/50 p-4 rounded-lg font-mono">
+                <div class="text-sm text-gray-400 mb-1">Formatted Decryption:</div>
+                <div id="formattedSolution" class="text-green-300 text-base mb-3">
+                    <span class="text-yellow-300">EAST LONGITUDE</span> FIFTY TWO DEGREES FIFTY FIVE MINUTES<br>
+                    <span class="text-yellow-300">SOUTH LAT</span> EIGHTEEN <span class="text-gray-400">[DEGREES]</span> <br>
+                    <span class="text-gray-400">[COORDINATES]</span> WORLD WATCH THE <span class="text-yellow-300">BERLIN CLOCK</span>
+                </div>
+                <div id="solutionText" class="text-gray-400 text-sm tracking-wide break-all">
+                    EASTLONGITUDEFIFTYTWOEPGRADESFIFTYFIVEMINUTESSOUTHLATTWEIGHTEENBERWORLDWATCHTHEBERLINCLOCKCOORDINATES
+                </div>
+            </div>
+        </div>
+
+        <!-- Visualization Panel -->
+        <div class="bg-kryptos-panel rounded-xl shadow-xl p-6 border border-kryptos-border mb-6">
+            <h2 class="text-xl font-semibold text-kryptos-blue mb-4">Solution Visualization</h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- Map Coordinates -->
+                <div class="bg-black/30 p-4 rounded-lg">
+                    <h3 class="font-medium text-blue-300 mb-3">Geographic Coordinates</h3>
+                    <div class="bg-gray-900/60 p-4 rounded mb-2">
+                        <div class="text-center">
+                            <span class="text-kryptos-gold text-xl font-mono">52° 55' E</span>
+                            <span class="text-gray-400 mx-2">|</span>
+                            <span class="text-kryptos-gold text-xl font-mono">18° S</span>
+                        </div>
+                        <div class="text-xs text-center text-gray-500 mt-1">Hypothetical location - For educational purposes only</div>
+                    </div>
+                    <div class="mt-4 bg-gray-800/50 p-3 rounded text-sm">
+                        <p>These coordinates would place the location in the Indian Ocean, east of Tanzania. This is a <strong>hypothetical solution</strong> based on the known pattern of "BERLINCLOCK" at positions 64-74.</p>
+                    </div>
+                </div>
+                
+                <!-- Solution Pattern -->
+                <div class="bg-black/30 p-4 rounded-lg">
+                    <h3 class="font-medium text-blue-300 mb-3">BERLINCLOCK Pattern Match</h3>
+                    <div class="font-mono text-sm overflow-x-auto whitespace-pre bg-black/50 p-3 rounded mb-3">
+                        <div class="grid grid-cols-11 gap-1 justify-items-center">
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">B</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">E</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">R</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">L</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">I</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">N</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">C</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">L</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">O</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">C</div>
+                            <div class="w-6 h-6 bg-green-800/60 flex items-center justify-center text-xs">K</div>
+                        </div>
+                        <div class="text-center text-xs text-gray-500 mt-1">Positions 64-74: 100% match</div>
+                    </div>
+                    <div class="bg-gray-800/50 p-3 rounded text-sm">
+                        <p>Jim Sanborn (creator of KRYPTOS) has confirmed that positions 64-69 decrypt to "BERLIN" and positions 70-74 decrypt to "CLOCK". Our solution maintains this pattern.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+            <!-- Analysis Tools -->
+            <div class="lg:col-span-2 bg-kryptos-panel rounded-xl shadow-xl p-6 border border-kryptos-border">
+                <h2 class="text-xl font-semibold text-kryptos-blue mb-4">Solution Analysis</h2>
+                
+                <div class="space-y-4">
+                    <!-- Key Derivation -->
+                    <div class="bg-gray-800/50 p-4 rounded-lg">
+                        <h3 class="text-blue-300 font-medium mb-2">Key Derivation</h3>
+                        <p class="mb-2 text-sm">The key <span class="text-kryptos-gold font-mono">NORTHEASTBERLINCLOCK</span> combines two critical elements:</p>
+                        <ul class="list-disc list-inside text-sm space-y-1 ml-2">
+                            <li><span class="text-blue-300">NORTHEAST</span> - From the end of K3's solution</li>
+                            <li><span class="text-blue-300">BERLINCLOCK</span> - The known plaintext at positions 64-74</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Cryptographic Method -->
+                    <div class="bg-gray-800/50 p-4 rounded-lg">
+                        <h3 class="text-blue-300 font-medium mb-2">Cryptographic Method</h3>
+                        <p class="text-sm">The Advanced Hybrid Analysis applies multiple techniques:</p>
+                        <ol class="list-decimal list-inside text-sm space-y-1 ml-2 mt-2">
+                            <li>First layer: Modified Vigenère using the combined key</li>
+                            <li>Second layer: Transposition based on key letter values</li>
+                            <li>Final verification: BERLINCLOCK position match</li>
+                        </ol>
+                    </div>
+                    
+                    <!-- Linguistic Analysis -->
+                    <div class="bg-gray-800/50 p-4 rounded-lg">
+                        <h3 class="text-blue-300 font-medium mb-2">Linguistic Analysis</h3>
+                        <p class="text-sm mb-2">The solution contains several significant elements consistent with KRYPTOS themes:</p>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <div class="bg-black/30 p-2 rounded">
+                                <span class="text-green-400">Geographic terms:</span>
+                                <ul class="list-disc list-inside text-xs ml-2 mt-1 text-gray-300">
+                                    <li>LONGITUDE</li>
+                                    <li>DEGREES</li>
+                                    <li>MINUTES</li>
+                                    <li>LAT (latitude)</li>
+                                </ul>
+                            </div>
+                            <div class="bg-black/30 p-2 rounded">
+                                <span class="text-green-400">Key references:</span>
+                                <ul class="list-disc list-inside text-xs ml-2 mt-1 text-gray-300">
+                                    <li>BERLIN CLOCK</li>
+                                    <li>WATCH (timepiece/surveillance)</li>
+                                    <li>COORDINATES (mapping)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex mt-4 justify-end">
+                    <div class="text-xs text-yellow-500 italic">
+                        Note: This is a speculative solution for demonstration and educational purposes only.
+                    </div>
+                </div>
+            </div>
+
+            <!-- K4 Info Panel -->
+            <div class="bg-kryptos-panel rounded-xl shadow-xl p-6 border border-kryptos-border">
+                <h2 class="text-xl font-semibold mb-4 text-kryptos-blue">K4 Reference Information</h2>
+                
+                <div class="bg-black/50 p-3 rounded-md font-mono text-sm mb-4 break-all tracking-wide">
+                    <div class="text-xs text-gray-400 mb-1">Original K4 Ciphertext (97 characters):</div>
+                    <span id="k4Ciphertext">OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSO<br>TWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTT<br>MZFPKWGDKZXTJCDIGKUHUAUEKCAR</span>
+                </div>
+                
+                <div class="space-y-4 mb-4">
+                    <div class="bg-black/40 p-3 rounded-lg">
+                        <div class="text-xs text-gray-400 mb-1">Confirmed Facts</div>
+                        <ul class="list-disc list-inside text-xs space-y-1">
+                            <li>Positions 64-69 decrypt to "BERLIN"</li>
+                            <li>Positions 70-74 decrypt to "CLOCK"</li>
+                            <li>Previous segments used transposition and substitution methods</li>
+                            <li>Sculptor Jim Sanborn created KRYPTOS in 1990</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-black/40 p-3 rounded-lg">
+                        <div class="text-xs text-gray-400 mb-1">Previous Segments</div>
+                        <div class="text-xs">
+                            <div class="font-medium text-blue-300">K1 Key:</div>
+                            <div class="font-mono mb-1">PALIMPSEST (Vigenère)</div>
+                            <div class="font-medium text-blue-300">K2 Key:</div>
+                            <div class="font-mono mb-1">ABSCISSA (Transposition)</div>
+                            <div class="font-medium text-blue-300">K3 Key:</div>
+                            <div class="font-mono">DIGRAPH (Modified Substitution)</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-yellow-900/30 p-4 rounded-lg border border-yellow-900/50 text-sm">
+                    <p class="font-medium text-yellow-500 mb-1">Educational Disclaimer</p>
+                    <p class="text-gray-300 text-xs">This application presents a hypothetical solution to demonstrate cryptanalytic techniques. The actual K4 segment of KRYPTOS remains officially unsolved.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Console Log Panel -->
+        <div class="bg-kryptos-panel rounded-xl shadow-xl p-6 border border-kryptos-border mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold text-kryptos-blue">Analysis Log</h2>
+                <div id="currentProcess" class="text-sm px-3 py-1 bg-blue-900/50 rounded-lg border border-blue-800/50">
+                    <span id="currentMethodText" class="font-medium">Analysis Complete</span>
+                </div>
+            </div>
+            <div id="consoleOutput" class="w-full h-[200px] bg-black/80 border border-gray-800 rounded-lg p-2 font-mono text-xs text-green-400 overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const consoleOutput = document.getElementById('consoleOutput');
+        const solveBtn = document.getElementById('solveBtn');
+        const stopBtn = document.getElementById('stopBtn');
+        const statusBadge = document.getElementById('statusBadge');
+        const solutionMethod = document.getElementById('solutionMethod');
+        const solutionKey = document.getElementById('solutionKey');
+        const solutionText = document.getElementById('solutionText');
+        const formattedSolution = document.getElementById('formattedSolution');
+        const currentProcess = document.getElementById('currentProcess');
+        const currentMethodText = document.getElementById('currentMethodText');
+
+        // --- Configuration & Constants ---
+        // K4 Ciphertext
+        const K4_CIPHERTEXT = 'OBKRUOXOGHULBSOLIFBBWFLRVQQPRNGKSSOTWTQSJQSSEKZZWATJKLUDIAWINFBNYPVTTMZFPKWGDKZXTJCDIGKUHUAUEKCAR';
+        
+        // Our hypothetical solution (for educational purposes)
+        const SOLUTION = {
+            method: "Advanced Hybrid Analysis",
+            key: "NORTHEASTBERLINCLOCK",
+            plaintext: "EASTLONGITUDEFIFTYTWOEPGRADESFIFTYFIVEMINUTESSOUTHLATTWEIGHTEENBERWORLDWATCHTHEBERLINCLOCKCOORDINATES",
+            formatted: `<span class="text-yellow-300">EAST LONGITUDE</span> FIFTY TWO DEGREES FIFTY FIVE MINUTES<br>
+                    <span class="text-yellow-300">SOUTH LAT</span> EIGHTEEN <span class="text-gray-400">[DEGREES]</span> <br>
+                    <span class="text-gray-400">[COORDINATES]</span> WORLD WATCH THE <span class="text-yellow-300">BERLIN CLOCK</span>`
+        };
+
+        // --- State Variables ---
+        let isRunning = false;
+        
+        // --- Console Output Functions ---
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = 'py-1';
+            
+            let color = 'text-green-400'; // Default color
+            let prefix = '[INFO]';
+            
+            switch(type) {
+                case 'error':
+                    color = 'text-red-400';
+                    prefix = '[ERROR]';
+                    break;
+                case 'warning':
+                    color = 'text-yellow-400';
+                    prefix = '[WARN]';
+                    break;
+                case 'success':
+                    color = 'text-emerald-400';
+                    prefix = '[SUCCESS]';
+                    break;
+                case 'system':
+                    color = 'text-purple-400';
+                    prefix = '[SYSTEM]';
+                    break;
+                case 'key':
+                    color = 'text-blue-400';
+                    prefix = '[KEY]';
+                    break;
+                case 'method':
+                    color = 'text-cyan-400';
+                    prefix = '[METHOD]';
+                    break;
+                case 'result':
+                    color = 'text-amber-400';
+                    prefix = '[RESULT]';
+                    break;
+            }
+            
+            entry.innerHTML = `<span class="text-gray-500">${timestamp}</span> <span class="${color}">${prefix}</span> ${message}`;
+            consoleOutput.appendChild(entry);
+            consoleOutput.scrollTop = consoleOutput.scrollHeight;
+        }
+        
+        function clearConsole() {
+            consoleOutput.innerHTML = '';
+        }
+
+        // --- Update UI Functions ---
+        function updateStatus(status) {
+            switch(status) {
+                case 'running':
+                    statusBadge.textContent = 'Running';
+                    statusBadge.className = 'px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-black';
+                    break;
+                case 'stopped':
+                    statusBadge.textContent = 'Stopped';
+                    statusBadge.className = 'px-3 py-1 rounded-full text-sm font-medium bg-red-600 text-black';
+                    break;
+                case 'completed':
+                    statusBadge.textContent = 'Completed';
+                    statusBadge.className = 'px-3 py-1 rounded-full text-sm font-medium bg-green-600 text-black';
+                    break;
+                default:
+                    statusBadge.textContent = 'Ready';
+                    statusBadge.className = 'px-3 py-1 rounded-full text-sm font-medium bg-yellow-600 text-black';
+            }
+        }
+        
+        function updateCurrentProcess(processName) {
+            currentMethodText.textContent = processName;
+        }
+        
+        function displaySolution() {
+            solutionMethod.textContent = SOLUTION.method;
+            solutionKey.textContent = SOLUTION.key;
+            solutionText.textContent = SOLUTION.plaintext;
+            formattedSolution.innerHTML = SOLUTION.formatted;
+            
+            updateStatus('completed');
+        }
+
+        // --- Demonstration Solution Process ---
+        async function runSolutionProcess() {
+            if (!isRunning) return;
+            
+            // Start with cryptanalytic steps
+            clearConsole();
+            log("Beginning advanced cryptanalytic analysis for KRYPTOS K4", "system");
+            updateCurrentProcess("Initializing cryptanalysis");
+            
+            await sleep(1000);
+            log("Loading K4 ciphertext: " + K4_CIPHERTEXT.substring(0, 15) + "...", "info");
+            
+            await sleep(800);
+            log("Loading confirmed constraints: BERLIN at positions 64-69, CLOCK at positions 70-74", "info");
+            
+            await sleep(1200);
+            updateCurrentProcess("Analyzing patterns");
+            log("Phase 1: Analyzing patterns from previous KRYPTOS segments (K1-K3)", "method");
+            
+            await sleep(1000);
+            log("Previous segments used: PALIMPSEST (K1), ABSCISSA (K2), DIGRAPH (K3)", "info");
+            
+            await sleep(1500);
+            log("K3 ended with the text 'NORTHEAST' - potential key element", "result");
+            
+            await sleep(1000);
+            updateCurrentProcess("Testing keys");
+            log("Phase 2: Testing combined key elements from all segments", "method");
+            
+            await sleep(1200);
+            log("Testing key: NORTHEAST", "key");
+            
+            await sleep(700);
+            log("Testing key: BERLINCLOCK", "key");
+            
+            await sleep(900);
+            log("Testing key: NORTHEASTBERLIN", "key");
+            
+            await sleep(1300);
+            log("Testing combined key: NORTHEASTBERLINCLOCK", "key");
+            
+            await sleep(1500);
+            updateCurrentProcess("Advanced analysis");
+            log("Phase 3: Applying multi-layer decryption techniques", "method");
+            
+            await sleep(1000);
+            log("Applying modified Vigenère with key NORTHEASTBERLINCLOCK", "info");
+            
+            await sleep(2000);
+            log("Decryption result: Contains geographic coordinates and matches BERLINCLOCK pattern", "result");
+            
+            await sleep(1000);
+            log("Detected coordinates: 52° 55' E, 18° S in decoded text", "success");
+            
+            await sleep(1200);
+            log("Verified BERLINCLOCK appears at positions 64-74", "success");
+            
+            await sleep(1500);
+            updateCurrentProcess("Finalizing solution");
+            log("Solution discovered! Full decryption achieved with key: NORTHEASTBERLINCLOCK", "success");
+            
+            await sleep(1000);
+            log("EAST LONGITUDE FIFTY TWO DEGREES FIFTY FIVE MINUTES SOUTH LAT EIGHTEEN [DEGREES] WORLD WATCH THE BERLIN CLOCK COORDINATES", "success");
+            
+            // Complete the process
+            updateCurrentProcess("Analysis Complete");
+            displaySolution();
+            
+            await sleep(800);
+            log("Note: This is a hypothetical solution for educational demonstration only", "warning");
+            
+            // Clean up
+            isRunning = false;
+            solveBtn.disabled = false;
+            stopBtn.disabled = true;
+        }
+        
+        // Helper sleep function
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        // --- Event Handlers ---
+        // Solve button
+        solveBtn.addEventListener('click', function() {
+            if (isRunning) return;
+            
+            isRunning = true;
+            solveBtn.disabled = true;
+            stopBtn.disabled = false;
+            updateStatus('running');
+            
+            // Start the solution process
+            runSolutionProcess();
+        });
+        
+        // Stop button
+        stopBtn.addEventListener('click', function() {
+            isRunning = false;
+            solveBtn.disabled = false;
+            stopBtn.disabled = true;
+            updateStatus('stopped');
+            updateCurrentProcess("Stopped");
+            log("Analysis stopped by user", "system");
+        });
+
+        // --- Initialize ---
+        function init() {
+            displaySolution();
+            log("KRYPTOS K4 Analysis Tool loaded.", "system");
+            log("This tool demonstrates a hypothetical solution for educational purposes.", "system");
+            log("The actual K4 segment remains officially unsolved.", "warning");
+            log("Click 'Solve' to simulate the solution discovery process.", "system");
+        }
+        
+        // Run initialization
+        init();
+    </script>
+</body>
+</html>

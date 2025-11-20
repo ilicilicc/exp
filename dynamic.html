@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aethyr Emergent 3D Slides</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* General Body and Layout */
+        body {
+            margin: 0;
+            overflow: hidden; /* Hide scrollbars */
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); /* Dark abstract background */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #e0e0e0;
+            perspective: 1200px; /* Stronger 3D perspective */
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            color: #6495ED; /* CornflowerBlue */
+            text-shadow: 0 0 15px rgba(100, 149, 237, 0.9);
+            z-index: 100; /* Ensure title is above 3D elements */
+        }
+
+        /* Container for the 3D layers */
+        .aethyr-container {
+            width: 80vmin; /* Responsive width */
+            height: 80vmin; /* Responsive height */
+            max-width: 600px; /* Max size */
+            max-height: 600px;
+            position: relative;
+            transform-style: preserve-3d; /* Allow children to exist in 3D space */
+            transform: rotateX(20deg) rotateY(-30deg); /* Initial slight rotation */
+            transition: transform 1s ease-in-out; /* Smooth transition for container rotation */
+            z-index: 10; /* Ensure container is above background but below title */
+        }
+
+        /* Individual Layer Styling */
+        .aethyr-layer {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            border: 2px solid rgba(100, 149, 237, 0.5);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column; /* Stack canvas and controls */
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
+            box-sizing: border-box;
+            opacity: 0.8;
+            transition: transform 0.8s ease-in-out, opacity 0.8s ease-in-out, box-shadow 0.5s ease;
+            cursor: pointer;
+            backface-visibility: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Specific Layer Colors and Initial Positions */
+        .layer-omega {
+            background: rgba(138, 43, 226, 0.3); /* BlueViolet */
+            transform: translateZ(150px); /* Position further out */
+            z-index: 5;
+        }
+
+        .layer-gamma3 {
+            background: rgba(0, 191, 255, 0.3); /* DeepSkyBlue */
+            transform: translateZ(100px); /* Position further out */
+            z-index: 4;
+        }
+
+        .layer-gamma2 {
+            background: rgba(50, 205, 50, 0.3); /* LimeGreen */
+            transform: translateZ(50px); /* Position further out */
+            z-index: 3;
+        }
+
+        .layer-aethyr1 {
+            background: rgba(255, 140, 0, 0.3); /* DarkOrange */
+            transform: translateZ(0px); /* Base layer */
+            z-index: 2;
+        }
+
+         .layer-genesis {
+            background: rgba(220, 20, 60, 0.3); /* Crimson */
+            transform: translateZ(-50px); /* Position further back */
+            z-index: 1;
+        }
+
+        /* Hover Effects */
+        .aethyr-layer:hover {
+            opacity: 1.0;
+            box-shadow: 0 0 30px rgba(100, 149, 237, 0.8); /* Brighter shadow on hover */
+        }
+
+        /* Active/Focused Layer Effect */
+        .aethyr-layer.is-active {
+            opacity: 1.0;
+            transform: translateZ(200px) scale(1.1); /* Bring forward and slightly enlarge */
+            box-shadow: 0 0 40px rgba(100, 149, 237, 1.0), 0 0 60px rgba(100, 149, 237, 0.8); /* Intense glow */
+            z-index: 10; /* Bring to front */
+        }
+
+        /* Effect on other layers when one is active */
+        .aethyr-layer.is-inactive {
+             opacity: 0.1; /* Significantly fade out inactive layers */
+             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); /* Reduce shadow */
+        }
+
+        /* Conceptual Data Flow Visualization (using pseudo-elements or generated content) */
+        .aethyr-layer::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none; /* Don't interfere with clicks */
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 70%);
+            animation: pulse 2s infinite ease-out; /* Conceptual pulse animation */
+        }
+
+        .aethyr-layer.is-active::before {
+            opacity: 1; /* Show pulse effect on active layer */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.5); opacity: 0.5; }
+            50% { transform: scale(1.0); opacity: 0.8; }
+            100% { transform: scale(0.5); opacity: 0.5; }
+        }
+
+        /* Canvas styling within layers */
+        .aethyr-layer canvas {
+            border: 1px solid #4a4a4a;
+            border-radius: 5px;
+            background-color: #1a1a1a;
+            touch-action: none;
+            width: 90%; /* Canvas takes 90% of layer width */
+            height: 90%; /* Canvas takes 90% of layer height */
+            margin-bottom: 10px; /* Space for controls */
+            display: none; /* Hidden by default */
+        }
+
+        .aethyr-layer.is-active canvas {
+            display: block; /* Show canvas when layer is active */
+        }
+
+        /* Controls styling within layers */
+        .aethyr-layer .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+            width: 100%; /* Controls take full width of layer */
+            flex-wrap: wrap; /* Allow buttons to wrap */
+            display: none; /* Hidden by default */
+        }
+
+        .aethyr-layer.is-active .controls {
+            display: flex; /* Show controls when layer is active */
+        }
+
+        .aethyr-layer button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .aethyr-layer button:hover {
+            background-color: #4a4a4a;
+        }
+
+        .aethyr-layer button:active {
+            transform: scale(0.95);
+        }
+
+        .aethyr-layer button:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(74, 74, 74, 0.5);
+        }
+
+        /* Pattern description within layers */
+        .aethyr-layer .pattern-description {
+            font-size: 1em;
+            font-weight: normal;
+            margin-top: 5px;
+            text-align: center;
+            color: #ccc;
+            display: none; /* Hidden by default */
+        }
+
+        .aethyr-layer.is-active .pattern-description {
+            display: block; /* Show description when active */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+                margin-bottom: 20px;
+            }
+            .aethyr-container {
+                width: 90vmin;
+                height: 90vmin;
+                max-width: 450px;
+                max-height: 450px;
+                transform: rotateX(25deg) rotateY(-20deg); /* Adjust initial rotation for smaller screens */
+            }
+            .aethyr-layer {
+                font-size: 0.9em;
+            }
+             .aethyr-layer.is-active {
+                 transform: translateZ(150px) scale(1.05); /* Less aggressive scale/translate on smaller screens */
+             }
+            .aethyr-layer canvas {
+                width: 95%;
+                height: 95%;
+            }
+            .aethyr-layer button {
+                padding: 6px 12px;
+                font-size: 0.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Aethyr Emergent 3D Slides</h1>
+
+    <div class="aethyr-container" id="aethyrContainer">
+        <div class="aethyr-layer layer-omega" data-layer="omega">
+            <canvas id="canvas-omega"></canvas>
+            <div class="controls">
+                <button data-action="startStop">Start</button>
+                <button data-action="reset">Reset</button>
+                <button data-action="randomize">Randomize</button>
+            </div>
+            <div class="pattern-description">vΩ-Omega Layer (ΔΣ7): High Fidelity Patterns</div>
+        </div>
+        <div class="aethyr-layer layer-gamma3" data-layer="gamma3">
+            <canvas id="canvas-gamma3"></canvas>
+            <div class="controls">
+                <button data-action="startStop">Start</button>
+                <button data-action="reset">Reset</button>
+                <button data-action="randomize">Randomize</button>
+            </div>
+            <div class="pattern-description">vΓ.3-ΩΨ OverMind Ascendant: Adaptive Logic Patterns</div>
+        </div>
+        <div class="aethyr-layer layer-gamma2" data-layer="gamma2">
+            <canvas id="canvas-gamma2"></canvas>
+            <div class="controls">
+                <button data-action="startStop">Start</button>
+                <button data-action="reset">Reset</button>
+                <button data-action="randomize">Randomize</button>
+            </div>
+            <div class="pattern-description">vΓ.2-ΔΣ OverMind Evolved: Dynamic Complexity Patterns</div>
+        </div>
+        <div class="aethyr-layer layer-aethyr1" data-layer="aethyr1">
+            <canvas id="canvas-aethyr1"></canvas>
+            <div class="controls">
+                <button data-action="startStop">Start</button>
+                <button data-action="reset">Reset</button>
+                <button data-action="randomize">Randomize</button>
+            </div>
+            <div class="pattern-description">AETHYR-1 Core: Stable Patterns</div>
+        </div>
+         <div class="aethyr-layer layer-genesis" data-layer="genesis">
+            <canvas id="canvas-genesis"></canvas>
+            <div class="controls">
+                <button data-action="startStop">Start</button>
+                <button data-action="reset">Reset</button>
+                <button data-action="randomize">Randomize</button>
+            </div>
+            <div class="pattern-description">Genesis Input Layer: Initial Seed Patterns</div>
+        </div>
+    </div>
+
+    <script>
+        // --- Global Configuration for Emergent Patterns ---
+        const GRID_SIZE = 80; // Number of cells per side (adjust for performance)
+        const DEAD_COLOR = '#1a1a1a'; // Match background
+
+        // --- Store state for each emergent pattern (canvas) ---
+        // Using a Map to store individual states for each layer's emergent pattern
+        const emergentStates = new Map(); // Map<layerName, {canvas, ctx, grid, nextGrid, animationFrameId, isRunning, aliveColor, randomDensity, updateInterval}>
+
+        // --- 3D Architecture Visualization Logic ---
+        const container = document.getElementById('aethyrContainer');
+        const layers = document.querySelectorAll('.aethyr-layer');
+        let activeLayerName = null; // To keep track of the currently active layer
+
+        // Initialize emergent state for each layer
+        layers.forEach(layer => {
+            const layerName = layer.dataset.layer;
+            const canvas = layer.querySelector('canvas');
+            const ctx = canvas.getContext('2d');
+
+            // Initial default properties for each emergent pattern
+            let aliveColor = '#6495ED'; // Default CornflowerBlue
+            let randomDensity = 0.3;
+            let updateInterval = 100;
+
+            // Set initial properties based on layer type (can be customized further)
+            switch (layerName) {
+                case 'genesis':
+                    aliveColor = '#DC143C'; randomDensity = 0.4; updateInterval = 150; break;
+                case 'aethyr1':
+                    aliveColor = '#FF8C00'; randomDensity = 0.25; updateInterval = 100; break;
+                case 'gamma2':
+                    aliveColor = '#32CD32'; randomDensity = 0.35; updateInterval = 80; break;
+                case 'gamma3':
+                    aliveColor = '#00BFFF'; randomDensity = 0.2; updateInterval = 70; break;
+                case 'omega':
+                    aliveColor = '#8A2BE2'; randomDensity = 0.15; updateInterval = 50; break;
+            }
+
+            emergentStates.set(layerName, {
+                canvas: canvas,
+                ctx: ctx,
+                grid: [],
+                nextGrid: [],
+                animationFrameId: null,
+                isRunning: false,
+                aliveColor: aliveColor,
+                randomDensity: randomDensity,
+                updateInterval: updateInterval,
+                // Store references to buttons for easy access
+                startStopBtn: layer.querySelector('button[data-action="startStop"]'),
+                resetBtn: layer.querySelector('button[data-action="reset"]'),
+                randomizeBtn: layer.querySelector('button[data-action="randomize"]'),
+                controls: layer.querySelector('.controls'), // Add controls element to state
+                description: layer.querySelector('.pattern-description')
+            });
+
+            // Add event listeners for controls within each layer
+            const state = emergentStates.get(layerName);
+            state.startStopBtn.addEventListener('click', () => startStop(state));
+            state.resetBtn.addEventListener('click', () => reset(state));
+            state.randomizeBtn.addEventListener('click', () => randomizeAndStart(state));
+
+            // Initial grid setup for each canvas
+            initializeGrid(state);
+            resizeCanvas(state);
+            drawGrid(state);
+        });
+
+        // Function to handle layer clicks
+        layers.forEach(layer => {
+            layer.addEventListener('click', () => {
+                const clickedLayerName = layer.dataset.layer;
+
+                // If clicking the already active layer, do nothing
+                if (activeLayerName === clickedLayerName) {
+                    return;
+                }
+
+                // Stop the pattern on the previously active layer, if any
+                if (activeLayerName) {
+                    const prevState = emergentStates.get(activeLayerName);
+                    stopEmergentPatterns(prevState);
+                }
+
+                // Update active layer tracking
+                activeLayerName = clickedLayerName;
+
+                // Remove active/inactive classes from all layers
+                layers.forEach(l => {
+                    l.classList.remove('is-active');
+                    l.classList.remove('is-inactive');
+                });
+
+                // Set the clicked layer as active
+                layer.classList.add('is-active');
+
+                // Set all other layers as inactive
+                layers.forEach(l => {
+                    if (l !== layer) {
+                        l.classList.add('is-inactive');
+                    }
+                });
+
+                // Rotate the container to focus on the active layer
+                const layerData = layer.dataset.layer;
+                let rotateX = 20;
+                let rotateY = -30;
+
+                switch(layerData) {
+                    case 'omega':
+                        rotateX = 10;
+                        rotateY = -40;
+                        break;
+                    case 'gamma3':
+                        rotateX = 15;
+                        rotateY = -35;
+                        break;
+                    case 'gamma2':
+                         rotateX = 20;
+                         rotateY = -30;
+                         break;
+                    case 'aethyr1':
+                         rotateX = 25;
+                         rotateY = -25;
+                         break;
+                    case 'genesis':
+                         rotateX = 30;
+                         rotateY = -20;
+                         break;
+                }
+                container.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+
+                // Start the emergent pattern for the newly active layer
+                const activeState = emergentStates.get(activeLayerName);
+                randomizeAndStart(activeState); // Randomize and start the pattern for the active layer
+            });
+
+            // Optional: Add a reset on double click
+             layer.addEventListener('dblclick', () => {
+                 // Stop the pattern on this layer if it's active
+                 const layerName = layer.dataset.layer;
+                 const state = emergentStates.get(layerName);
+                 stopEmergentPatterns(state);
+
+                 // Reset 3D view and all patterns
+                 resetAllPatternsAnd3DView();
+             });
+        });
+
+        // Global click listener to reset if clicking outside any interactive elements
+        document.body.addEventListener('click', (event) => {
+             if (!event.target.closest('.aethyr-layer') && event.target.id !== 'aethyrContainer' && !event.target.closest('button')) {
+                 resetAllPatternsAnd3DView();
+             }
+        });
+
+         // Prevent double click from zooming on touch devices
+         document.addEventListener('dblclick', function(e){
+             e.preventDefault();
+         }, { passive: false });
+
+        // Function to reset all patterns and the 3D view
+        function resetAllPatternsAnd3DView() {
+            // Stop all emergent patterns
+            emergentStates.forEach(state => stopEmergentPatterns(state));
+
+            // Reset 3D container rotation
+            container.style.transform = 'rotateX(20deg) rotateY(-30deg)';
+
+            // Remove active/inactive classes from all layers
+            layers.forEach(l => {
+                l.classList.remove('is-active');
+                l.classList.remove('is-inactive');
+            });
+
+            activeLayerName = null; // No active layer
+        }
+
+
+        // --- Emergent Pattern Generator Functions (now accept a 'state' object) ---
+
+        function initializeGrid(state) {
+            state.grid = new Array(GRID_SIZE).fill(null).map(() => new Array(GRID_SIZE).fill(0));
+            state.nextGrid = new Array(GRID_SIZE).fill(null).map(() => new Array(GRID_SIZE).fill(0));
+        }
+
+        function randomizeGrid(state) {
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    state.grid[i][j] = Math.random() > (1 - state.randomDensity) ? 1 : 0;
+                }
+            }
+        }
+
+        function resizeCanvas(state) {
+            // Canvas will now fill its parent layer, adjusting for controls and description
+            const parentLayer = state.canvas.parentElement;
+            // Calculate available height for canvas within the layer, subtracting controls and description
+            // Ensure controls and description elements exist before accessing offsetHeight
+            const controlsHeight = state.controls ? state.controls.offsetHeight + 10 : 0; // 10px margin-top for controls
+            const descriptionHeight = state.description ? state.description.offsetHeight + 5 : 0; // 5px margin-top for description
+            const padding = 20; // Total vertical padding of the layer (10px top + 10px bottom)
+
+            const availableHeight = parentLayer.clientHeight - controlsHeight - descriptionHeight - padding;
+            const availableWidth = parentLayer.clientWidth - padding; // Total horizontal padding of the layer
+
+            // Ensure canvas maintains a square aspect ratio within the available space
+            const size = Math.min(availableWidth, availableHeight);
+            state.canvas.width = size;
+            state.canvas.height = size;
+
+            state.CELL_SIZE = state.canvas.width / GRID_SIZE;
+            drawGrid(state); // Redraw after resize
+        }
+
+        function drawGrid(state) {
+            state.ctx.clearRect(0, 0, state.canvas.width, state.canvas.height);
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    state.ctx.fillStyle = state.grid[i][j] === 1 ? state.aliveColor : DEAD_COLOR;
+                    state.ctx.fillRect(i * state.CELL_SIZE, j * state.CELL_SIZE, state.CELL_SIZE, state.CELL_SIZE);
+                }
+            }
+        }
+
+        function countAliveNeighbors(row, col, grid) {
+            let count = 0;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    if (i === 0 && j === 0) continue;
+
+                    // Wrap around edges (toroidal grid)
+                    const ni = (row + i + GRID_SIZE) % GRID_SIZE;
+                    const nj = (col + j + GRID_SIZE) % GRID_SIZE;
+
+                    count += grid[ni][nj];
+                }
+            }
+            return count;
+        }
+
+        function applyAethyrRule(row, col, state) {
+            const neighbors = countAliveNeighbors(row, col, state.grid);
+            const currentState = state.grid[row][col];
+
+            if (currentState === 1) { // Cell is alive
+                if (neighbors < 2 || neighbors > 3) {
+                    return 0; // Dies
+                }
+                return 1; // Survives
+            } else { // Cell is dead
+                if (neighbors === 3) {
+                    return 1; // Reproduces
+                }
+                 if (neighbors === 6) {
+                    let neighborCoordSum = 0;
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            if (i === 0 && j === 0) continue;
+                            const ni = (row + i + GRID_SIZE) % GRID_SIZE;
+                            const nj = (col + j + GRID_SIZE) % GRID_SIZE;
+                            if (state.grid[ni][nj] === 1) {
+                                neighborCoordSum += (ni + nj);
+                            }
+                        }
+                    }
+                    if (neighborCoordSum % 2 === 0) {
+                        return 1;
+                    }
+                 }
+                return 0;
+            }
+        }
+
+        function updateGrid(state) {
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    state.nextGrid[i][j] = applyAethyrRule(i, j, state);
+                }
+            }
+            [state.grid, state.nextGrid] = [state.nextGrid, state.grid];
+        }
+
+        function gameLoop(state) {
+            if (!state.isRunning) {
+                state.animationFrameId = null;
+                return;
+            }
+
+            updateGrid(state);
+            drawGrid(state);
+
+            state.animationFrameId = setTimeout(() => {
+                 requestAnimationFrame(() => gameLoop(state));
+            }, state.updateInterval);
+        }
+
+        function startStop(state) {
+            if (state.isRunning) {
+                state.isRunning = false;
+                state.startStopBtn.textContent = 'Start';
+                 if (state.animationFrameId) {
+                    clearTimeout(state.animationFrameId);
+                    state.animationFrameId = null;
+                 }
+            } else {
+                state.isRunning = true;
+                state.startStopBtn.textContent = 'Stop';
+                 if (!state.animationFrameId) {
+                    gameLoop(state);
+                 }
+            }
+        }
+
+        function reset(state) {
+            stopEmergentPatterns(state); // Stop if running
+            initializeGrid(state);
+            drawGrid(state);
+        }
+
+        function randomizeAndStart(state) {
+            reset(state); // Reset grid state
+            randomizeGrid(state);
+            drawGrid(state); // Draw initial random state
+            startStop(state); // Start the animation
+        }
+
+        function stopEmergentPatterns(state) {
+            if (state.isRunning) {
+                startStop(state);
+            }
+        }
+
+        // --- Initial Setup ---
+        // Add a global resize listener that updates all canvases
+        window.addEventListener('resize', () => {
+            emergentStates.forEach(state => resizeCanvas(state));
+        });
+
+        // Initially activate the first layer (Genesis) to show a pattern on load
+        // This simulates a click on the Genesis layer
+        document.querySelector('.layer-genesis').click();
+
+        console.log("Aethyr Emergent 3D Slides Initialized.");
+        console.log("Click on any 3D layer to explore its emergent pattern!");
+    </script>
+
+</body>
+</html>
