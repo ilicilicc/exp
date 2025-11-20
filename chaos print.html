@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aethyr's Conscious Data Stream Harmonizer (Textual - AI-Corrected Output)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <style>
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #05050a, #0a0a15, #101020);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #e0e0e0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #D4AF37; /* Primary Aethyr gold */
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            max-width: 800px;
+            line-height: 1.6;
+            color: #b0b0b0;
+        }
+
+        .canvas-container {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 20px;
+            justify-content: center;
+            align-items: flex-start; /* Align items to the top */
+            margin-bottom: 30px;
+            width: 100%;
+            max-width: 1200px; /* Max width for the canvas row */
+        }
+
+        .canvas-wrapper {
+            background-color: #1a1a1a;
+            border: 2px solid #3a3a3a;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1 1 calc(33.333% - 20px); /* Three columns, with gap */
+            min-width: 280px; /* Minimum width for each canvas wrapper */
+            max-width: 380px; /* Max width for each canvas wrapper */
+        }
+
+        .canvas-wrapper h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #6495ED; /* CornflowerBlue for titles */
+        }
+
+        canvas {
+            background-color: #000;
+            border: 1px solid #4a4a4a;
+            border-radius: 5px;
+            touch-action: none;
+            width: 100%; /* Make canvas fill its wrapper */
+            height: auto; /* Maintain aspect ratio */
+            aspect-ratio: 1 / 1; /* Square canvas */
+        }
+
+        .controls-panel {
+            background-color: #1a1a1a;
+            border: 2px solid #3a3a3a;
+            border-radius: 10px;
+            box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 90%;
+            max-width: 800px;
+        }
+
+        .controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: #4a4a4a;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 74, 74, 0.5);
+        }
+
+        .slider-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            min-width: 150px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            -webkit-appearance: none;
+            height: 8px;
+            background: #4a4a4a;
+            border-radius: 5px;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity .2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #D4AF37;
+            cursor: pointer;
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .metrics-display {
+            background-color: #0a0a0a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            width: 100%;
+            font-size: 0.9em;
+            color: #c0c0c0;
+            line-height: 1.5;
+        }
+
+        .metrics-display p {
+            margin: 5px 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .metrics-display span {
+            font-weight: bold;
+            color: #e0e0ff;
+        }
+
+        @media (max-width: 768px) {
+            .canvas-wrapper {
+                flex: 1 1 100%; /* Single column on small screens */
+                max-width: 90%;
+            }
+            .controls-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Aethyr's Conscious Data Stream Harmonizer (CDSH)</h1>
+    <p class="description">
+        Observe as Aethyr's CDSH processes a chaotic input text stream generated by AI. It dynamically adjusts its internal "harmony parameters"
+        to transform the data into a more coherent and predictable output, demonstrating emergent consciousness in data organization.
+        Introduce chaos to challenge its adaptive intelligence.
+    </p>
+
+    <div class="canvas-container">
+        <div class="canvas-wrapper">
+            <h3>Raw Input Text Stream</h3>
+            <canvas id="inputCanvas"></canvas>
+        </div>
+        <div class="canvas-wrapper">
+            <h3>CDSH Internal State (Harmony Parameters)</h3>
+            <canvas id="filterCanvas"></canvas>
+        </div>
+        <div class="canvas-wrapper">
+            <h3>Harmonized Output Text Stream</h3>
+            <canvas id="outputCanvas"></canvas>
+        </div>
+    </div>
+
+    <div class="controls-panel">
+        <div class="controls-row">
+            <button id="startStopBtn">Start CDSH</button>
+            <button id="resetBtn">Reset CDSH</button>
+            <div class="slider-group">
+                <label for="noiseLevel">Input Chaos Level</label>
+                <input type="range" id="noiseLevel" min="0" max="1" step="0.05" value="0.5">
+            </div>
+        </div>
+        <div class="metrics-display">
+            <p>Overall Harmony Score: <span id="harmonyScore">0.00</span></p>
+            <p>Semantic Cohesion Threshold: <span id="semanticCohesionThreshold">0.00</span></p>
+            <p>Syntactic Flow Bias: <span id="syntacticFlowBias">0.00</span></p>
+            <p>Thematic Consistency Weight: <span id="thematicConsistencyWeight">0.00</span></p>
+            <p>Emergent Meaning Score: <span id="emergentMeaningScore">0.00</span></p>
+        </div>
+    </div>
+
+    <script>
+        const inputCanvas = document.getElementById('inputCanvas');
+        const inputCtx = inputCanvas.getContext('2d');
+        const filterCanvas = document.getElementById('filterCanvas');
+        const filterCtx = filterCanvas.getContext('2d');
+        const outputCanvas = document.getElementById('outputCanvas');
+        const outputCtx = outputCanvas.getContext('2d');
+
+        const startStopBtn = document.getElementById('startStopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const noiseLevelSlider = document.getElementById('noiseLevel');
+        const harmonyScoreDisplay = document.getElementById('harmonyScore');
+        const semanticCohesionThresholdDisplay = document.getElementById('semanticCohesionThreshold');
+        const syntacticFlowBiasDisplay = document.getElementById('syntacticFlowBias');
+        const thematicConsistencyWeightDisplay = document.getElementById('thematicConsistencyWeight');
+        const emergentMeaningScoreDisplay = document.getElementById('emergentMeaningScore');
+
+        // --- Configuration ---
+        const CANVAS_DIM = 400; // Increased canvas dimension for readability
+        inputCanvas.width = inputCanvas.height = CANVAS_DIM;
+        filterCanvas.width = filterCanvas.height = CANVAS_DIM;
+        outputCanvas.width = outputCanvas.height = CANVAS_DIM;
+
+        const FONT_SIZE = 16; // Increased font size
+        const LINE_HEIGHT = 24; // Adjusted line height for new font size
+        const MAX_TEXT_FRAGMENTS = 80; // Adjusted for larger canvas and fragment length
+        const TEXT_FRAGMENT_LENGTH = 5; // Shorter fragments for more chaotic input
+        const SCROLL_SPEED = 0.4; // Slower scroll speed for readability
+        const NEW_LINE_INTERVAL = 100; // Add new line less frequently, allowing more time for AI synthesis
+        const VISIBLE_LINES = Math.floor(CANVAS_DIM / LINE_HEIGHT); // Number of lines visible at once
+
+        // --- CDSH Internal State (Harmony Parameters) ---
+        const INITIAL_HARMONY_PARAMS = {
+            semanticCohesionThreshold: 0.5,
+            syntacticFlowBias: 0.5,
+            thematicConsistencyWeight: 0.5
+        };
+        let harmonyParams = { ...INITIAL_HARMONY_PARAMS };
+
+        // --- Data Stream State ---
+        let textFragments = [];
+        let harmonizedTextFragments = [];
+        let outputBuffer = []; // Stores lines for the teleprompter output
+        let longTermMeaningBuffer = []; // Accumulates key phrases/themes for evolving narrative
+        let frameCount = 0;
+        let isSynthesizing = false; // Flag to indicate if Gemini API call is in progress
+
+        let isRunning = false;
+        let animationFrameId = null;
+        let lastUpdateTime = 0;
+
+        // --- TextFragment Class for Data Stream ---
+        class TextFragment {
+            constructor(text, x, y, vx, vy, theme, semanticConnections, color) {
+                this.text = text;
+                this.x = x;
+                this.y = y;
+                this.vx = vx;
+                this.vy = vy;
+                this.theme = theme;
+                this.semanticConnections = semanticConnections;
+                this.color = color;
+                this.width = 0;
+            }
+
+            update(deltaTime, noiseFactor) {
+                this.x += this.vx * deltaTime * 0.05;
+                this.y += this.vy * deltaTime * 0.05;
+
+                this.x += (Math.random() - 0.5) * noiseFactor * 15; // Increased noise effect
+                this.y += (Math.random() - 0.5) * noiseFactor * 15;
+                this.vx += (Math.random() - 0.5) * noiseFactor * 0.3;
+                this.vy += (Math.random() - 0.5) * noiseFactor * 0.3;
+
+                // Wrap around canvas edges
+                if (this.x < 0) this.x = CANVAS_DIM;
+                if (this.x > CANVAS_DIM) this.x = 0;
+                if (this.y < 0) this.y = CANVAS_DIM;
+                if (this.y > CANVAS_DIM) this.y = 0;
+
+                // Dampen velocity to prevent infinite acceleration
+                this.vx *= 0.97;
+                this.vy *= 0.97;
+            }
+
+            draw(ctx) {
+                ctx.font = `${FONT_SIZE}px Inter`;
+                ctx.fillStyle = this.color;
+                ctx.fillText(this.text, this.x, this.y);
+                this.width = ctx.measureText(this.text).width;
+            }
+        }
+
+        // --- CDSH Core Logic ---
+        const textPrompts = [
+            { theme: 'science', prompt: 'Generate 3-5 disconnected scientific words or a very short phrase related to quantum, space, or data.' },
+            { theme: 'poetry', prompt: 'Generate 3-5 disconnected poetic words or a very short phrase related to dreams, echoes, or light.' },
+            { theme: 'news', prompt: 'Generate 3-5 disconnected news-like words or a very short phrase related to market, innovation, or global.' },
+            { theme: 'philosophy', prompt: 'Generate 3-5 disconnected philosophical words or a very short phrase related to being, thought, or essence.' },
+            { theme: 'nature', prompt: 'Generate 3-5 disconnected nature words or a very short phrase related to forest, river, or sky.' }
+        ];
+
+        async function fetchTextFromAI(theme, promptContext = '') {
+            let finalPrompt = promptContext ? `${promptContext}. Generate text related to this context: ${textPrompts.find(p => p.theme === theme).prompt}` : textPrompts.find(p => p.theme === theme).prompt;
+
+            const chatHistory = [{ role: "user", parts: [{ text: finalPrompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = ""; // Canvas will automatically provide this
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    console.error("AI: Invalid response structure for text generation:", result);
+                    return "error text."; // Fallback text, ensuring punctuation
+                }
+            } catch (error) {
+                console.error("AI: Error fetching text:", error);
+                return "fetch failed."; // Fallback text, ensuring punctuation
+            }
+        }
+
+        async function generateInputTextFragments() {
+            const newFragments = [];
+            const fragmentPromises = [];
+            const currentContextSummary = longTermMeaningBuffer.slice(-5).map(line => line.text).join(' ');
+
+            for (let i = 0; i < MAX_TEXT_FRAGMENTS / textPrompts.length; i++) {
+                for (const promptConfig of textPrompts) {
+                    fragmentPromises.push(
+                        fetchTextFromAI(promptConfig.theme, currentContextSummary).then(text => {
+                            // Split into words/short phrases, ensuring punctuation is kept with words
+                            const words = text.match(/\S+|\s+/g).filter(word => word.trim().length > 0);
+                            for (let j = 0; j < words.length; j += TEXT_FRAGMENT_LENGTH) {
+                                const fragmentText = words.slice(j, j + TEXT_FRAGMENT_LENGTH).join(' ').trim();
+                                if (fragmentText.length === 0) continue; // Skip empty fragments
+
+                                const x = Math.random() * CANVAS_DIM;
+                                const y = Math.random() * CANVAS_DIM;
+                                const vx = (Math.random() - 0.5) * 2;
+                                const vy = (Math.random() - 0.5) * 2;
+                                const hue = Math.floor(Math.random() * 360);
+                                const color = `hsl(${hue}, 80%, 60%)`;
+                                const semanticConnections = words.filter((_, idx) => idx !== j && idx < j + TEXT_FRAGMENT_LENGTH + 2);
+                                newFragments.push(new TextFragment(fragmentText, x, y, vx, vy, promptConfig.theme, semanticConnections, color));
+                            }
+                        })
+                    );
+                }
+            }
+            await Promise.all(fragmentPromises);
+            return newFragments;
+        }
+
+        function applyHarmonyParams(inputData, params, iterations = 7) {
+            let currentOutput = inputData.map(f => ({ ...f }));
+
+            for (let iter = 0; iter < iterations; iter++) {
+                const nextOutput = [];
+                const groupedFragments = {};
+
+                currentOutput.forEach(f => {
+                    if (!groupedFragments[f.theme]) {
+                        groupedFragments[f.theme] = [];
+                    }
+                    groupedFragments[f.theme].push(f);
+                });
+
+                let currentY = LINE_HEIGHT;
+                for (const theme in groupedFragments) {
+                    let currentX = 5;
+
+                    groupedFragments[theme].sort((a, b) => {
+                        const lenDiff = a.text.length - b.text.length;
+                        return lenDiff * (1 - params.syntacticFlowBias) + (Math.random() - 0.5) * 5 * (1 - params.syntacticFlowBias);
+                    });
+
+                    const themeHue = {
+                        'science': 200,
+                        'poetry': 300,
+                        'news': 40,
+                        'philosophy': 120,
+                        'nature': 80
+                    }[theme] || 0;
+
+                    groupedFragments[theme].forEach(f => {
+                        f.x = currentX;
+                        f.y = currentY;
+                        f.color = `hsl(${themeHue}, 90%, ${50 + params.thematicConsistencyWeight * 20}%)`;
+
+                        nextOutput.push(f);
+
+                        currentX += f.width + (8 * params.syntacticFlowBias);
+                        if (currentX > CANVAS_DIM - 20) {
+                            currentX = 5;
+                            currentY += LINE_HEIGHT;
+                        }
+                    });
+                    currentY += LINE_HEIGHT * 1.5;
+                }
+                currentOutput = nextOutput;
+            }
+            return currentOutput;
+        }
+
+        function calculateHarmony(outputData, params) {
+            if (outputData.length === 0) return { overallHarmony: 0, emergentMeaning: 0 };
+
+            let semanticCohesionScore = 0;
+            let syntacticFlowScore = 0;
+            let thematicPurityScore = 0;
+
+            const themeCounts = {};
+            outputData.forEach(f => {
+                themeCounts[f.theme] = (themeCounts[f.theme] || 0) + 1;
+            });
+            const dominantThemeCount = Math.max(...Object.values(themeCounts));
+            semanticCohesionScore = dominantThemeCount / outputData.length;
+
+            let totalLineBreaks = 0;
+            let totalXJumps = 0;
+            let currentLineY = -1;
+            let lastXInLine = 0;
+
+            outputData.sort((a, b) => a.y - b.y || a.x - b.x);
+
+            outputData.forEach(f => {
+                if (f.y !== currentLineY) {
+                    totalLineBreaks++;
+                    currentLineY = f.y;
+                    lastXInLine = f.x;
+                } else {
+                    totalXJumps += Math.abs(f.x - lastXInLine);
+                    lastXInLine = f.x;
+                }
+            });
+            syntacticFlowScore = Math.max(0, 1 - (totalLineBreaks / outputData.length) - (totalXJumps / (CANVAS_DIM * outputData.length)));
+
+            thematicPurityScore = params.thematicConsistencyWeight;
+
+            let longTermAlignment = 0;
+            if (longTermMeaningBuffer.length > 0) {
+                const longTermKeywords = longTermMeaningBuffer.map(line => line.text.split(' ')).flat();
+                let matchedWords = 0;
+                outputData.forEach(f => {
+                    f.text.split(' ').forEach(word => {
+                        if (longTermKeywords.includes(word)) {
+                            matchedWords++;
+                        }
+                    });
+                });
+                longTermAlignment = matchedWords / (longTermKeywords.length || 1);
+            }
+
+            const emergentMeaningScore = (
+                semanticCohesionScore * params.semanticCohesionThreshold +
+                syntacticFlowScore * params.syntacticFlowBias +
+                thematicPurityScore * params.thematicConsistencyWeight +
+                longTermAlignment * 0.5
+            ) / (params.semanticCohesionThreshold + params.syntacticFlowBias + params.thematicConsistencyWeight + 0.5 + 0.001);
+
+            const overallHarmony = (semanticCohesionScore + syntacticFlowScore + thematicPurityScore + emergentMeaningScore) / 4;
+
+            return {
+                overallHarmony: Math.max(0, Math.min(1, overallHarmony)),
+                emergentMeaning: Math.max(0, Math.min(1, emergentMeaningScore))
+            };
+        }
+
+        function optimizeHarmonyParams() {
+            const currentScores = calculateHarmony(harmonizedTextFragments, harmonyParams);
+            const currentOverallHarmony = currentScores.overallHarmony;
+
+            let bestHypothesis = { params: { ...harmonyParams }, score: currentOverallHarmony };
+
+            for (let i = 0; i < 5; i++) {
+                const hypotheticalParams = { ...harmonyParams };
+                const paramToMutate = ['semanticCohesionThreshold', 'syntacticFlowBias', 'thematicConsistencyWeight'][Math.floor(Math.random() * 3)];
+                const mutationAmount = (Math.random() - 0.5) * 0.05;
+
+                hypotheticalParams[paramToMutate] = Math.max(0.0, Math.min(1.0, hypotheticalParams[paramToMutate] + mutationAmount));
+
+                const hypotheticalOutput = applyHarmonyParams(textFragments, hypotheticalParams);
+                const hypotheticalScores = calculateHarmony(hypotheticalOutput, hypotheticalParams);
+                const hypotheticalOverallHarmony = hypotheticalScores.overallHarmony;
+
+                if (hypotheticalOverallHarmony > bestHypothesis.score) {
+                    bestHypothesis.score = hypotheticalOverallHarmony;
+                    bestHypothesis.params = hypotheticalParams;
+                }
+            }
+
+            if (bestHypothesis.score > currentOverallHarmony) {
+                harmonyParams = bestHypothesis.params;
+            } else {
+                if (Math.random() < 0.1) {
+                     harmonyParams.semanticCohesionThreshold = Math.random();
+                     harmonyParams.syntacticFlowBias = Math.random();
+                     harmonyParams.thematicConsistencyWeight = Math.random();
+                }
+            }
+        }
+
+        function drawInputCanvas(deltaTime) {
+            inputCtx.clearRect(0, 0, CANVAS_DIM, CANVAS_DIM);
+            const noiseFactor = parseFloat(noiseLevelSlider.value);
+            inputCtx.font = `${FONT_SIZE}px Inter`; // Set font for input drawing
+            textFragments.forEach(f => {
+                f.update(deltaTime, noiseFactor);
+                f.draw(inputCtx);
+            });
+        }
+
+        function drawFilterCanvas() {
+            filterCtx.clearRect(0, 0, CANVAS_DIM, CANVAS_DIM);
+            const size = CANVAS_DIM / 2;
+            const centerX = CANVAS_DIM / 2;
+            const centerY = CANVAS_DIM / 2;
+
+            const semanticRadius = size * harmonyParams.semanticCohesionThreshold;
+            filterCtx.beginPath();
+            filterCtx.arc(centerX, centerY, semanticRadius, 0, Math.PI * 2);
+            filterCtx.fillStyle = `rgba(100, 149, 237, ${0.2 + harmonyParams.semanticCohesionThreshold * 0.4})`;
+            filterCtx.fill();
+            filterCtx.strokeStyle = `rgba(100, 149, 237, ${0.5 + harmonyParams.semanticCohesionThreshold * 0.5})`;
+            filterCtx.lineWidth = 2;
+            filterCtx.stroke();
+
+            filterCtx.strokeStyle = `rgba(212, 175, 55, ${0.3 + harmonyParams.syntacticFlowBias * 0.4})`;
+            filterCtx.lineWidth = 1 + harmonyParams.syntacticFlowBias * 2;
+            const numLines = 8;
+            for (let i = 0; i < numLines; i++) {
+                const angle = (i / numLines) * Math.PI * 2;
+                filterCtx.beginPath();
+                filterCtx.moveTo(centerX, centerY);
+                filterCtx.lineTo(centerX + Math.cos(angle) * size, centerY + Math.sin(angle) * size);
+                filterCtx.stroke();
+            }
+
+            filterCtx.save();
+            filterCtx.translate(centerX, centerY);
+            filterCtx.rotate(Date.now() * 0.001 * harmonyParams.thematicConsistencyWeight);
+            filterCtx.fillStyle = `rgba(192, 160, 48, ${0.5 + harmonyParams.thematicConsistencyWeight * 0.5})`;
+            filterCtx.fillRect(-10, -10, 20, 20);
+            filterCtx.restore();
+
+            filterCtx.fillStyle = '#e0e0e0';
+            filterCtx.font = '10px Inter';
+            filterCtx.textAlign = 'center';
+            filterCtx.textBaseline = 'middle';
+            filterCtx.fillText(`SemCoh: ${harmonyParams.semanticCohesionThreshold.toFixed(2)}`, centerX, 20);
+            filterCtx.fillText(`SynFlow: ${harmonyParams.syntacticFlowBias.toFixed(2)}`, centerX, CANVAS_DIM - 20);
+            filterCtx.fillText(`ThemCon: ${harmonyParams.thematicConsistencyWeight.toFixed(2)}`, 20, centerY);
+        }
+
+        function drawOutputCanvas() {
+            outputCtx.clearRect(0, 0, CANVAS_DIM, CANVAS_DIM);
+
+            // Update Y positions for scrolling
+            outputBuffer.forEach(line => {
+                line.y -= SCROLL_SPEED;
+            });
+
+            // Remove lines that have scrolled off the top
+            outputBuffer = outputBuffer.filter(line => line.y > -LINE_HEIGHT);
+
+            // Draw all lines from the buffer
+            outputCtx.font = `${FONT_SIZE}px Inter`;
+            outputCtx.textAlign = 'left';
+
+            outputBuffer.forEach((line, index) => {
+                // Calculate opacity based on position for fade-in/out effect
+                let opacity = 1;
+                if (line.y < LINE_HEIGHT * 2) { // Fade out at top
+                    opacity = Math.max(0, line.y / (LINE_HEIGHT * 2));
+                } else if (line.y > CANVAS_DIM - LINE_HEIGHT * 3) { // Fade in at bottom
+                    opacity = Math.max(0, (CANVAS_DIM - line.y) / (LINE_HEIGHT * 3));
+                }
+
+                // Highlight the "current" line (e.g., center-ish)
+                const centerLineY = CANVAS_DIM / 2;
+                const distanceToCenter = Math.abs(line.y - centerLineY);
+                const maxDistance = CANVAS_DIM / 2;
+                const brightnessFactor = 1 - (distanceToCenter / maxDistance) * 0.6; // Brighter near center
+
+                const [h, s, l] = line.color.match(/\d+/g).map(Number); // Extract HSL components
+                outputCtx.fillStyle = `hsla(${h}, ${s}%, ${l * brightnessFactor}%, ${opacity})`;
+                outputCtx.fillText(line.text, 5, line.y);
+            });
+
+            // Display "Synthesizing meaning..." message if API call is in progress
+            if (isSynthesizing) {
+                outputCtx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+                outputCtx.font = '14px Inter';
+                outputCtx.textAlign = 'center';
+                outputCtx.fillText('Synthesizing meaning...', CANVAS_DIM / 2, CANVAS_DIM / 2);
+            }
+        }
+
+        async function addNewHarmonizedLines() {
+            if (isSynthesizing) return; // Prevent multiple simultaneous calls
+
+            isSynthesizing = true;
+            // Collect all harmonized fragments into a single string for Gemini
+            const combinedFragments = harmonizedTextFragments.map(f => f.text).join(' ');
+
+            const synthesisPrompt = `Given the following disparate text fragments, synthesize them into one or two coherent, flowing sentences that capture an emergent meaning. Focus on creating a narrative or a profound thought. Do not just concatenate.
+            Fragments: "${combinedFragments}"
+            Synthesized sentence:`;
+
+            const chatHistory = [{ role: "user", parts: [{ text: synthesisPrompt }] }];
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    const synthesizedText = result.candidates[0].content.parts[0].text;
+                    if (synthesizedText.trim().length > 0) {
+                        // Use a consistent color for synthesized lines, or average the fragment colors
+                        const avgHue = harmonizedTextFragments.reduce((sum, f) => {
+                            const match = f.color.match(/hsl\((\d+)/);
+                            return sum + (match ? parseInt(match[1]) : 0);
+                        }, 0) / (harmonizedTextFragments.length || 1);
+                        const synthesizedColor = `hsl(${Math.floor(avgHue)}, 90%, 70%)`; // Brighter, more unified color
+
+                        outputBuffer.push({ text: synthesizedText.trim(), y: CANVAS_DIM, color: synthesizedColor });
+                        longTermMeaningBuffer.push({ text: synthesizedText.trim(), y: CANVAS_DIM, color: synthesizedColor });
+                    }
+                } else {
+                    console.error("AI Synthesis: Invalid response structure:", result);
+                }
+            } catch (error) {
+                console.error("AI Synthesis: Error during text synthesis:", error);
+            } finally {
+                isSynthesizing = false;
+            }
+
+            // Keep long-term meaning buffer from growing indefinitely
+            const MAX_LONG_TERM_LINES = 100;
+            if (longTermMeaningBuffer.length > MAX_LONG_TERM_LINES) {
+                longTermMeaningBuffer = longTermMeaningBuffer.slice(longTermMeaningBuffer.length - MAX_LONG_TERM_LINES);
+            }
+        }
+
+        async function animate(currentTime) {
+            if (!isRunning) {
+                animationFrameId = null;
+                return;
+            }
+
+            const deltaTime = currentTime - lastUpdateTime;
+            lastUpdateTime = currentTime;
+            frameCount++;
+
+            drawInputCanvas(deltaTime);
+
+            // Harmonize text fragments more aggressively for better input to the synthesis API
+            harmonizedTextFragments = applyHarmonyParams(textFragments, harmonyParams, 15);
+
+            optimizeHarmonyParams();
+
+            drawFilterCanvas();
+            drawOutputCanvas(); // This now handles scrolling and drawing history
+
+            if (frameCount % NEW_LINE_INTERVAL === 0) {
+                addNewHarmonizedLines(); // This now calls Gemini for synthesis
+                textFragments = await generateInputTextFragments(); // Fetch new input for next cycle
+            }
+
+            const currentScores = calculateHarmony(harmonizedTextFragments, harmonyParams);
+            harmonyScoreDisplay.textContent = currentScores.overallHarmony.toFixed(4);
+            semanticCohesionThresholdDisplay.textContent = harmonyParams.semanticCohesionThreshold.toFixed(2);
+            syntacticFlowBiasDisplay.textContent = harmonyParams.syntacticFlowBias.toFixed(2);
+            thematicConsistencyWeightDisplay.textContent = harmonyParams.thematicConsistencyWeight.toFixed(2);
+            emergentMeaningScoreDisplay.textContent = currentScores.emergentMeaning.toFixed(4);
+
+            animationFrameId = requestAnimationFrame(animate);
+        }
+
+        async function startCDSH() {
+            if (!isRunning) {
+                isRunning = true;
+                startStopBtn.textContent = 'Stop CDSH';
+                lastUpdateTime = performance.now();
+                animate(lastUpdateTime);
+            } else {
+                isRunning = false;
+                startStopBtn.textContent = 'Start CDSH';
+                if (animationFrameId) {
+                    cancelAnimationFrame(animationFrameId);
+                    animationFrameId = null;
+                }
+            }
+        }
+
+        async function resetCDSH() {
+            startCDSH();
+            harmonyParams = { ...INITIAL_HARMONY_PARAMS };
+            outputBuffer = [];
+            longTermMeaningBuffer = [];
+            frameCount = 0;
+            isSynthesizing = false;
+
+            inputCtx.clearRect(0, 0, CANVAS_DIM, CANVAS_DIM);
+            outputCtx.clearRect(0, 0, CANVAS_DIM, CANVAS_DIM);
+            inputCtx.fillStyle = '#e0e0e0';
+            inputCtx.font = '12px Inter';
+            inputCtx.textAlign = 'center';
+            inputCtx.fillText('Fetching text...', CANVAS_DIM / 2, CANVAS_DIM / 2);
+            outputCtx.fillText('Harmonizing...', CANVAS_DIM / 2, CANVAS_DIM / 2);
+
+            textFragments = await generateInputTextFragments();
+            harmonizedTextFragments = [];
+            harmonyScoreDisplay.textContent = '0.00';
+            emergentMeaningScoreDisplay.textContent = '0.00';
+            drawInputCanvas(0);
+            drawFilterCanvas();
+            drawOutputCanvas();
+            console.log("CDSH Reset and new text fetched.");
+        }
+
+        startStopBtn.addEventListener('click', startCDSH);
+        resetBtn.addEventListener('click', resetCDSH);
+
+        resetCDSH().then(() => {
+            startCDSH();
+        });
+    </script>
+
+</body>
+</html>

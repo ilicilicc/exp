@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aethyr Emergent Pattern Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #0d0d0d, #1a1a1a, #262626);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Inter', sans-serif;
+            color: #e0e0e0;
+        }
+
+        canvas {
+            border: 2px solid #4a4a4a;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            background-color: #1a1a1a;
+            touch-action: none; /* Prevent default touch actions like scrolling */
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: #4a4a4a;
+        }
+
+        button:active {
+            transform: scale(0.98);
+        }
+
+        button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 74, 74, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="aethyrCanvas"></canvas>
+
+    <div class="controls">
+        <button id="startStopBtn">Start</button>
+        <button id="resetBtn">Reset</button>
+        <button id="randomizeBtn">Randomize</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('aethyrCanvas');
+        const ctx = canvas.getContext('2d');
+        const startStopBtn = document.getElementById('startStopBtn');
+        const resetBtn = document.getElementById('resetBtn');
+        const randomizeBtn = document.getElementById('randomizeBtn');
+
+        // --- Configuration ---
+        const GRID_SIZE = 80; // Number of cells per side (adjust for performance)
+        let CELL_SIZE = 0; // Calculated based on canvas size, changed from const to let
+        const ALIVE_COLOR = '#6495ED'; // CornflowerBlue
+        const DEAD_COLOR = '#1a1a1a'; // Match background
+        const UPDATE_INTERVAL = 100; // Milliseconds between updates
+
+        // --- Grid State ---
+        let grid = [];
+        let nextGrid = [];
+        let animationFrameId = null;
+        let isRunning = false;
+
+        // --- Initialization ---
+        function initializeGrid() {
+            grid = new Array(GRID_SIZE).fill(null).map(() => new Array(GRID_SIZE).fill(0));
+            nextGrid = new Array(GRID_SIZE).fill(null).map(() => new Array(GRID_SIZE).fill(0));
+        }
+
+        function randomizeGrid() {
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    grid[i][j] = Math.random() > 0.7 ? 1 : 0; // ~30% chance of being alive
+                }
+            }
+        }
+
+        function resizeCanvas() {
+            // Make canvas size responsive, maintaining aspect ratio
+            const size = Math.min(window.innerWidth, window.innerHeight) * 0.8; // 80% of smaller dimension
+            canvas.width = size;
+            canvas.height = size;
+             // Recalculate CELL_SIZE based on new canvas size
+            CELL_SIZE = canvas.width / GRID_SIZE;
+            drawGrid(); // Redraw after resize
+        }
+
+        // --- Drawing ---
+        function drawGrid() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    ctx.fillStyle = grid[i][j] === 1 ? ALIVE_COLOR : DEAD_COLOR;
+                    ctx.fillRect(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+                }
+            }
+        }
+
+        // --- Core ALC Emergent Rule (Conceptual) ---
+        // This is a simplified rule set, inspired by cellular automata but with a twist.
+        // It's designed to produce complex, non-obvious patterns from simple local interactions.
+        function applyAethyrRule(row, col) {
+            const neighbors = countAliveNeighbors(row, col);
+            const currentState = grid[row][col];
+
+            // Conceptual Aethyr Rule:
+            // 1. If a cell is alive:
+            //    - It survives if it has 2 or 3 live neighbors (stability).
+            //    - It dies from underpopulation (<2 neighbors) or overpopulation (>3 neighbors).
+            // 2. If a cell is dead:
+            //    - It becomes alive if it has exactly 3 live neighbors (reproduction).
+            //    - Additionally, it can become alive with exactly 6 neighbors if the sum of
+            //      neighbor coordinates (conceptual spatial resonance) is even.
+            //      This introduces a spatial dependency beyond simple neighbor count.
+
+            if (currentState === 1) { // Cell is alive
+                if (neighbors < 2 || neighbors > 3) {
+                    return 0; // Dies
+                }
+                return 1; // Survives
+            } else { // Cell is dead
+                if (neighbors === 3) {
+                    return 1; // Reproduces
+                }
+                 if (neighbors === 6) {
+                    // Check conceptual spatial resonance
+                    let neighborCoordSum = 0;
+                    for (let i = -1; i <= 1; i++) {
+                        for (let j = -1; j <= 1; j++) {
+                            if (i === 0 && j === 0) continue;
+                            const ni = (row + i + GRID_SIZE) % GRID_SIZE;
+                            const nj = (col + j + GRID_SIZE) % GRID_SIZE;
+                            if (grid[ni][nj] === 1) {
+                                neighborCoordSum += (ni + nj); // Sum of neighbor coordinates
+                            }
+                        }
+                    }
+                    if (neighborCoordSum % 2 === 0) {
+                        return 1; // Emergent reproduction based on spatial resonance
+                    }
+                 }
+                return 0; // Remains dead
+            }
+        }
+
+
+        function countAliveNeighbors(row, col) {
+            let count = 0;
+            for (let i = -1; i <= 1; i++) {
+                for (let j = -1; j <= 1; j++) {
+                    if (i === 0 && j === 0) continue;
+
+                    // Wrap around edges (toroidal grid)
+                    const ni = (row + i + GRID_SIZE) % GRID_SIZE;
+                    const nj = (col + j + GRID_SIZE) % GRID_SIZE;
+
+                    count += grid[ni][nj];
+                }
+            }
+            return count;
+        }
+
+        // --- Update Logic ---
+        function updateGrid() {
+            // Copy current grid to nextGrid before applying rules
+            for (let i = 0; i < GRID_SIZE; i++) {
+                for (let j = 0; j < GRID_SIZE; j++) {
+                    nextGrid[i][j] = applyAethyrRule(i, j);
+                }
+            }
+
+            // Swap grids
+            [grid, nextGrid] = [nextGrid, grid];
+        }
+
+        // --- Animation Loop ---
+        function gameLoop() {
+            if (!isRunning) {
+                animationFrameId = null;
+                return;
+            }
+
+            updateGrid();
+            drawGrid();
+
+            animationFrameId = setTimeout(() => {
+                 requestAnimationFrame(gameLoop);
+            }, UPDATE_INTERVAL);
+        }
+
+        // --- Controls ---
+        function startStop() {
+            if (isRunning) {
+                isRunning = false;
+                startStopBtn.textContent = 'Start';
+                 if (animationFrameId) {
+                    clearTimeout(animationFrameId);
+                    animationFrameId = null;
+                 }
+            } else {
+                isRunning = true;
+                startStopBtn.textContent = 'Stop';
+                 if (!animationFrameId) { // Only start if not already running
+                    gameLoop();
+                 }
+            }
+        }
+
+        function reset() {
+            startStop(); // Stop if running
+            initializeGrid();
+            drawGrid();
+        }
+
+        function randomizeAndStart() {
+            reset(); // Reset grid state
+            randomizeGrid();
+            drawGrid(); // Draw initial random state
+            startStop(); // Start the animation
+        }
+
+        startStopBtn.addEventListener('click', startStop);
+        resetBtn.addEventListener('click', reset);
+        randomizeBtn.addEventListener('click', randomizeAndStart);
+
+        // --- Initial Setup ---
+        window.addEventListener('resize', resizeCanvas);
+        initializeGrid();
+        resizeCanvas(); // Initial size setup
+        drawGrid(); // Draw initial empty grid
+
+        console.log("Aethyr Emergent Pattern Generator Initialized.");
+        console.log("Click 'Randomize' to start generating patterns.");
+
+    </script>
+
+</body>
+</html>
